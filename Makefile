@@ -1,7 +1,6 @@
 SHELL := /bin/bash
 PROJECTNAME = elixir_playground
 THIS_DIR = $(shell pwd)
-WORKDIR = /$(PROJECTNAME)
 
 .PHONY: help
 help:
@@ -35,8 +34,8 @@ shell: .dockerimage
 		--rm \
 		-it \
 		--hostname devbox \
-		--workdir $(WORKDIR) \
-		--volume $(THIS_DIR)/scripts:$(WORKDIR) \
+		--workdir /$(PROJECTNAME) \
+		--volume $(THIS_DIR)/projects:/$(PROJECTNAME) \
 		$(PROJECTNAME):latest
 
 .PHONY: iex
