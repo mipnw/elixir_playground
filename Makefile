@@ -6,13 +6,8 @@ THIS_DIR = $(shell pwd)
 help:
 	@echo 'Usage: make [target] [options]'
 	@echo 'Build and use the Elixir Playground'
-	@echo ''
-	@echo 'Targets:'      
-	@echo '  build     builds the Elixir Playground: a Docker image with Elixir installed'
-	@echo '  shell     shells into the Elixir Playground in a Docker container'
-	@echo '  iex       interactive Elixir in a Docker container'
-	@echo '  clean     cleans your host of development artifacts'
-	@echo ''
+	@echo
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
 ifndef VERBOSE
 .SILENT:
@@ -26,10 +21,10 @@ endif
 		--target dev \
 		$(THIS_DIR)
 	docker image ls $(PROJECTNAME):latest > .dockerimage
-build: .dockerimage
+build: .dockerimage ## builds the Elixir Playground: a Docker image with Elixir installed
 
 .PHONY: shell
-shell: .dockerimage
+shell: .dockerimage ## shells into the Elixir Playground in a Docker container
 	docker run \
 		--rm \
 		-it \
@@ -39,7 +34,7 @@ shell: .dockerimage
 		$(PROJECTNAME):latest
 
 .PHONY: iex
-iex: .dockerimage
+iex: .dockerimage ## interactive Elixir in a Docker container
 	docker run \
 		--rm \
 		-it \
@@ -48,6 +43,6 @@ iex: .dockerimage
 		/usr/bin/iex
 
 .PHONY: clean
-clean:
+clean: ## cleans your host of development artifacts
 	-docker image rm -f $(PROJECTNAME):latest &> /dev/null
 	-rm .dockerimage &> /dev/null
